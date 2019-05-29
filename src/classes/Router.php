@@ -10,7 +10,7 @@ class Router {
     function __construct()
     {
         $this->getUrl();
-        $this->prepareRoute();
+        $data = $this->prepareRoute();
     }
 
     /**
@@ -32,24 +32,41 @@ class Router {
      */
     private function prepareRoute()
     {
+        $data = [];
+
         foreach($GLOBALS['routes'] as $route) {
-            if(
-            substr($route['controller'], 0, -10) == ucfirst(reset($this->url)) &&
-            $route['action'] == end($this->url) &&
-            $route['params'] == count($this->url) - 2 &&
-            $route['method'] == $_SERVER['REQUEST_METHOD'] &&
-            $route['uri'] == $this->setUri()) {
-                return [
-                    'controller' => $route['controller'],
-                    'action' => $route['action'],
-                    'method' => $route['method'],
-                    'params' => $route['params'],
-                    'uri' => $route['uri']
-                ];
+            if(substr($route['controller'], 0, -10) == ucfirst(reset($this->url))) {
+                $data['controller'] = $route['controller'];
             } else {
-                return false;
+                return (object) ['code' => 400, 'message' => 'There is no such a controller'];
+            }
+
+            if($route['action'] == end($this->url)) {
+                $data['action'] = $route['action'];
+            } else {
+                return (object) ['code' => 400, 'message' => 'There is no such an action'];
+            }
+
+            if($route['params'] == count($this->url) - 2) {
+                $data['params'] = $route['params'];
+            } else {
+                return (object) ['code' => 400, 'message' => 'Invalid number of parmas'];
+            }
+
+            if($route['method'] == $_SERVER['REQUEST_METHOD']) {
+                $data['method'] = $route['method'];
+            } else {
+                return (object) ['code' => 405, 'message' => 'Invalid http method'];
+            }
+
+            if($route['uri'] == $this->setUri()) {
+                $data['uri'] = $route['uri'];
+            } else {
+                return (object) ['code' => 404, 'message' => 'Invalid enpoint'];
             }
         }
+
+        return (object) $data;
         
     }
 
