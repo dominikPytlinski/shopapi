@@ -27,7 +27,7 @@ class Router {
      * 
      * prepare array for route
      * 
-     * @return  array   params for route
+     * @return  object   params for route or code and message of mistake
      * 
      */
     private function prepareRoute()
