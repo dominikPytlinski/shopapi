@@ -7,7 +7,7 @@
  */
 $GLOBALS['path'] = [
     'src'       => 'src/',
-    'app'       => 'app/',
+    'api'       => 'api/',
     'autoload'  => 'src/autoload.php',
     'provider'  => 'src/providers/api.provider.php'
 ];
