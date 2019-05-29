@@ -1,5 +1,6 @@
 <?php
 
+use src\classes\Router;
 
 /**
  * 
@@ -18,3 +19,5 @@ require 'src/config.php';
  * 
  */
 require $GLOBALS['path']['autoload'];
+
+$api = new Router();
