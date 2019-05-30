@@ -92,6 +92,15 @@ class Router {
         return $uri = reset($this->url).'/'.$params.end($this->url);
     }
 
+    /**
+     * 
+     * Create new instace of controller class
+     * 
+     * @param   $controller         string
+     * 
+     * @return  $this->controller   object
+     * 
+     */
     private function loadController($controller)
     {
         if(file_exists('api/controllers/'.$controller.'.php')) {
@@ -101,6 +110,14 @@ class Router {
         }
     }
 
+    /**
+     * 
+     * Call controller action
+     * 
+     * @param   $action string
+     * @param   $params int
+     * 
+     */
     private function loadAction($action, $params)
     {
         $methodParams = [];
@@ -114,18 +131,37 @@ class Router {
         }
     }
 
+    /**
+     * 
+     * Set controller and action
+     * 
+     * @param   $data   object
+     * 
+     */
     private function route($data)
     {
         if($data != null) {
             if(isset($data->code)) {
-                echo $data->message;
+                $this->error($data->code);
             } else {
                 $this->loadController($data->controller);
                 $this->loadAction($data->action, $data->params);
             }
         } else {
-            http_response_code(404);
+            $this->error(404);
         }
+    }
+
+    /**
+     * 
+     * Set http response code when error ocured
+     * 
+     * @param   $code   int
+     * 
+     */
+    private function error($code)
+    {
+        http_response_code($code);
     }
 
 }
