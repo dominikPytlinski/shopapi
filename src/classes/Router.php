@@ -2,15 +2,28 @@
 
 namespace src\classes;
 
+use api\controllers;
+
 class Router {
 
     private $url;
     private $data = [];
+    private $controller;
 
     function __construct()
     {
         $this->getUrl();
-        $data = $this->prepareRoute();
+        $data = ($this->url != null) ? $this->prepareRoute() : null;
+        if($data != null) {
+            if(isset($data->code)) {
+                echo $data->message;
+            } else {
+                $this->loadController($data->controller);
+                $this->loadAction($data->action, $data->params);
+            }
+        } else {
+            http_response_code(404);
+        }
     }
 
     /**
@@ -20,7 +33,7 @@ class Router {
      */
     private function getUrl()
     {
-        $this->url = explode('/', $_GET['url']);
+        $this->url = (!empty($_REQUEST)) ? explode('/', $_REQUEST['url']) : null;
     }
 
     /**
@@ -86,6 +99,28 @@ class Router {
         }
 
         return $uri = reset($this->url).'/'.$params.end($this->url);
+    }
+
+    private function loadController($controller)
+    {
+        if(file_exists('api/controllers/'.$controller.'.php')) {
+            require 'api/controllers/'.$controller.'.php';
+            $class = 'api\controllers\\'.$controller;
+            $this->controller = new $class();
+        }
+    }
+
+    private function loadAction($action, $params)
+    {
+        $methodParams = [];
+
+        for ($i = 1; $i <= count($this->url) - 2; $i++) {
+            array_push($methodParams, $this->url[$i]);
+        }
+
+        if(count($methodParams) == $params) {
+            $this->controller->$action((object) $methodParams);
+        }
     }
 
 }
