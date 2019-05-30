@@ -14,6 +14,7 @@ class IndexController extends Controller {
 
     public function index($params)
     {
-        Index::find();
+        $token = reset($params);
+        Index::auth($token);
     }
 }
