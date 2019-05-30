@@ -10,5 +10,8 @@
 return $providers = [
     'router_collection' => 'RouterCollection',
     'route'             => 'api',
-    'router'            => 'Router'
+    'router'            => 'Router',
+    'db'                => 'Database',
+    'model'             => 'Model',
+    'controller'        => 'Controller'
 ];

@@ -2,15 +2,18 @@
 
 namespace api\controllers;
 
-class IndexController {
+use src\classes\Controller;
+use api\models\Index;
+
+class IndexController extends Controller {
 
     function __construct()
     {
-
+        parent::__construct(__CLASS__);
     }
 
     public function index($params)
     {
-        
+        Index::find();
     }
 }
