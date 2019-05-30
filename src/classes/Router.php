@@ -14,16 +14,7 @@ class Router {
     {
         $this->getUrl();
         $data = ($this->url != null) ? $this->prepareRoute() : null;
-        if($data != null) {
-            if(isset($data->code)) {
-                echo $data->message;
-            } else {
-                $this->loadController($data->controller);
-                $this->loadAction($data->action, $data->params);
-            }
-        } else {
-            http_response_code(404);
-        }
+        $this->route($data);
     }
 
     /**
@@ -120,6 +111,20 @@ class Router {
 
         if(count($methodParams) == $params) {
             $this->controller->$action((object) $methodParams);
+        }
+    }
+
+    private function route($data)
+    {
+        if($data != null) {
+            if(isset($data->code)) {
+                echo $data->message;
+            } else {
+                $this->loadController($data->controller);
+                $this->loadAction($data->action, $data->params);
+            }
+        } else {
+            http_response_code(404);
         }
     }
 
