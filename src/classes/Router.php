@@ -106,7 +106,7 @@ class Router {
         if(file_exists('api/controllers/'.$controller.'.php')) {
             require 'api/controllers/'.$controller.'.php';
             $class = 'api\controllers\\'.$controller;
-            $this->controller = new $class();
+            $this->controller = new $class($this->url[1]);
         }
     }
 

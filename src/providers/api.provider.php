@@ -13,5 +13,6 @@ return $providers = [
     'router'            => 'Router',
     'db'                => 'Database',
     'model'             => 'Model',
+    'auth'              => 'Auth',
     'controller'        => 'Controller'
 ];
