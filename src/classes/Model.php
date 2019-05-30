@@ -9,6 +9,7 @@ class Model {
     public static function find()
     {
         echo 'find function';
+        DB::connect();
     }
 
 }
