@@ -14,7 +14,7 @@ class Router {
     {
         $this->getUrl();
         $data = ($this->url != null) ? $this->prepareRoute() : null;
-        $this->route($data);
+        (isset($data->code)) ? $this->error(400) : $this->route($data);
     }
 
     /**
@@ -41,36 +41,30 @@ class Router {
         foreach($GLOBALS['routes'] as $route) {
             if(substr($route['controller'], 0, -10) == ucfirst(reset($this->url))) {
                 $data['controller'] = $route['controller'];
-            } else {
-                return (object) ['code' => 400, 'message' => 'There is no such a controller'];
             }
 
             if($route['action'] == end($this->url)) {
                 $data['action'] = $route['action'];
-            } else {
-                return (object) ['code' => 400, 'message' => 'There is no such an action'];
             }
 
             if($route['params'] == count($this->url) - 2) {
                 $data['params'] = $route['params'];
-            } else {
-                return (object) ['code' => 400, 'message' => 'Invalid number of parmas'];
             }
 
             if($route['method'] == $_SERVER['REQUEST_METHOD']) {
                 $data['method'] = $route['method'];
-            } else {
-                return (object) ['code' => 405, 'message' => 'Invalid http method'];
             }
 
             if($route['uri'] == $this->setUri()) {
                 $data['uri'] = $route['uri'];
-            } else {
-                return (object) ['code' => 404, 'message' => 'Invalid enpoint'];
             }
         }
 
-        return (object) $data;
+        if(!isset($data['controller']) || !isset($data['action']) || !isset($data['params']) || !isset($data['method']) || !isset($data['uri'])) {
+            return (object) ['code' => 400];
+        } else {
+            return (object) $data;
+        }
         
     }
 
@@ -99,6 +93,7 @@ class Router {
      * @param   $controller         string
      * 
      * @return  $this->controller   object
+     * @return                      bool    Flag, if token is or not auth
      * 
      */
     private function loadController($controller)
@@ -107,6 +102,7 @@ class Router {
             require 'api/controllers/'.$controller.'.php';
             $class = 'api\controllers\\'.$controller;
             $this->controller = new $class($this->url[1]);
+            return (!$this->controller->auth) ? false : true;
         }
     }
 
@@ -144,8 +140,7 @@ class Router {
             if(isset($data->code)) {
                 $this->error($data->code);
             } else {
-                $this->loadController($data->controller);
-                $this->loadAction($data->action, $data->params);
+                (!$this->loadController($data->controller)) ? $this->error(401) : $this->loadAction($data->action, $data->params);
             }
         } else {
             $this->error(404);
@@ -162,6 +157,7 @@ class Router {
     private function error($code)
     {
         http_response_code($code);
+        exit();
     }
 
 }
