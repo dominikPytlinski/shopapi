@@ -4,10 +4,7 @@ namespace src\classes;
 
 class RouterCollection {
 
-    function __construct()
-    {
-        
-    }
+    private static $params = [];
 
     /**
      * 
@@ -19,8 +16,8 @@ class RouterCollection {
      */
     public static function get($uri, $name)
     {
-        $data = self::prepare($uri, $name, 'GET');
-        self::setRoute($data);
+        self::setParams(self::prepareParams($uri));
+        self::setRoute(self::prepare($uri, $name, 'GET'));
     }
 
     /**
@@ -65,6 +62,21 @@ class RouterCollection {
         self::setRoute($data);
     }
 
+    private static function prepareParams($uri)
+    {
+        preg_match_all('/\{(.*?)\}/', $uri, $matches);
+        return array_map(function ($m) {
+            return trim($m, '?');
+        }, $matches[1]);
+    }
+
+    private static function setParams($params)
+    {
+        for($i = 0; $i < count($params); $i++) {
+            self::$params['param'.$i] = $params[$i];
+        }
+    }
+
     /**
      * 
      * Prepare data for insert into $GLOBALS['routes']
@@ -78,7 +90,7 @@ class RouterCollection {
      */
     private static function prepare($uri, $name, $method)
     {
-        $url = explode('/', $uri);
+        
         $name = explode('@', $name);
 
         return [
@@ -86,7 +98,7 @@ class RouterCollection {
             'controller' => reset($name),
             'action' => end($name),
             'method' => $method,
-            'params' => count($url) - 2
+            'params' => self::$params
         ];
     }
 
@@ -100,6 +112,8 @@ class RouterCollection {
     private static function setRoute($data)
     {
         array_push($GLOBALS['routes'], $data);
+        echo '<pre>';
+        print_r($GLOBALS['routes']);
     }
 
 }

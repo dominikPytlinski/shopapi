@@ -14,12 +14,12 @@ class Router {
     {
         $this->getUrl();
         $data = ($this->url != null) ? $this->prepareRoute() : null;
-        (isset($data->code)) ? $this->error(400) : $this->route($data);
+        (isset($data->code)) ? $this->error($data->code) : $this->route($data);
     }
 
     /**
      * 
-     * get uri from $_GET['url]
+     * get uri from $_REQUEST['url]
      * 
      */
     private function getUrl()
@@ -39,32 +39,31 @@ class Router {
         $data = [];
 
         foreach($GLOBALS['routes'] as $route) {
-            if(substr($route['controller'], 0, -10) == ucfirst(reset($this->url))) {
-                $data['controller'] = $route['controller'];
-            }
-
-            if($route['action'] == end($this->url)) {
-                $data['action'] = $route['action'];
-            }
-
-            if($route['params'] == count($this->url) - 2) {
-                $data['params'] = $route['params'];
-            }
-
-            if($route['method'] == $_SERVER['REQUEST_METHOD']) {
-                $data['method'] = $route['method'];
-            }
-
-            if($route['uri'] == $this->setUri()) {
+            if(count(explode('/', $route['uri'])) === count($this->url)) {
                 $data['uri'] = $route['uri'];
             }
+            if(substr($route['controller'], 0, -10) === ucfirst(reset($this->url))) {
+                $data['controller'] = $route['controller'];
+            }
+            if($route['action'] === end($this->url)) {
+                $data['action'] = $route['action'];
+            }
+            if(count($route['params']) === count($this->url) - 2) {
+                $data['params'] = $route['params'];
+            }
+            if($route['method'] === $_SERVER['REQUEST_METHOD']) {
+                $data['method'] = $route['method'];
+            }
         }
 
-        if(!isset($data['controller']) || !isset($data['action']) || !isset($data['params']) || !isset($data['method']) || !isset($data['uri'])) {
+        if(!isset($data['uri']) || !isset($data['controller']) || !isset($data['action']) || !isset($data['params'])) {
             return (object) ['code' => 400];
-        } else {
-            return (object) $data;
         }
+        if(!isset($data['method'])) {
+            return (object) ['code' => 405];
+        }
+
+        return (object) $data;
         
     }
 
@@ -116,6 +115,9 @@ class Router {
      */
     private function loadAction($action, $params)
     {
+        //extract($params);
+        
+        exit();
         $methodParams = [];
 
         for ($i = 1; $i <= count($this->url) - 2; $i++) {
@@ -136,14 +138,10 @@ class Router {
      */
     private function route($data)
     {
-        if($data != null) {
-            if(isset($data->code)) {
-                $this->error($data->code);
-            } else {
-                (!$this->loadController($data->controller)) ? $this->error(401) : $this->loadAction($data->action, $data->params);
-            }
-        } else {
+        if($data === null) {
             $this->error(404);
+        } else {
+            (!$this->loadController($data->controller)) ? $this->error(401) : $this->loadAction($data->action, $data->params);
         }
     }
 
