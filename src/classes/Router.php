@@ -116,7 +116,9 @@ class Router {
     private function loadAction($action, $params)
     {
         //extract($params);
-        
+        $this->test($this->url, function () {
+            print_r($this->url);
+        });
         exit();
         $methodParams = [];
 
@@ -127,6 +129,11 @@ class Router {
         if(count($methodParams) == $params) {
             $this->controller->$action((object) $methodParams);
         }
+    }
+
+    private function test($url, $callback)
+    {
+        return $callback;
     }
 
     /**

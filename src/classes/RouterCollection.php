@@ -72,9 +72,7 @@ class RouterCollection {
 
     private static function setParams($params)
     {
-        for($i = 0; $i < count($params); $i++) {
-            self::$params['param'.$i] = $params[$i];
-        }
+        self::$params = $params;
     }
 
     /**
@@ -112,8 +110,6 @@ class RouterCollection {
     private static function setRoute($data)
     {
         array_push($GLOBALS['routes'], $data);
-        echo '<pre>';
-        print_r($GLOBALS['routes']);
     }
 
 }
