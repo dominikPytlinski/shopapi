@@ -17,7 +17,10 @@ class LoginController extends Controller {
 
     public function index(Object $request, $token)
     {
-        print_r(Login::select($request->login));
+        Login::where('users', [
+            ['login', '=', $request->login],
+            ['password', '=', Hash::create($request->password)]
+        ]);
     }
 
 }
