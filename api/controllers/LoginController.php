@@ -5,6 +5,7 @@ namespace api\controllers;
 use src\classes\Controller;
 use src\classes\Auth;
 use src\classes\Hash;
+use api\models\Login;
 
 class LoginController extends Controller {
 
@@ -16,7 +17,7 @@ class LoginController extends Controller {
 
     public function index(Object $request, $token)
     {
-        print_r($request);
+        print_r(Login::select($request->login));
     }
 
 }

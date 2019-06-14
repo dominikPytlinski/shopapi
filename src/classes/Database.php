@@ -10,18 +10,20 @@ class Database {
      * 
      * Connect with database
      * 
-     * @return  $db PDO object
+     * @return PDO object
      * 
      */
     function connect()
     {
         if(self::$db == null) {
             try {
-                return self::$db = new \PDO('mysql:host='.getenv('DB_HOST').';dbname='.getenv('DB_NAME'), getenv('DB_USER'), getenv('DB_PASS'));
+                self::$db = new \PDO('mysql:host='.getenv('DB_HOST').';dbname='.getenv('DB_NAME'), getenv('DB_USER'), getenv('DB_PASS'));
             } catch (\Throwable $th) {
                 throw $th;
             }
         }
+
+        return self::$db;
     }
 
 }

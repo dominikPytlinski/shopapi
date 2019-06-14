@@ -101,8 +101,7 @@ class Router {
         for ($i = 1; $i <= count($this->url) - 2; $i++) {
             array_push($this->parameters, $this->url[$i]);
         }
-
-        $this->controller->$action((object) $_REQUEST, ...array_values($this->parameters));
+        ($_SERVER['REQUEST_METHOD'] == 'GET' || $_SERVER['REQUEST_METHOD'] == 'DELETE') ? $this->controller->$action(...array_values($this->parameters)) : $this->controller->$action((object) $_REQUEST, ...array_values($this->parameters));
     }
 
     /**
