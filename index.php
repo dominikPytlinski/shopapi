@@ -19,5 +19,6 @@ require 'src/config.php';
  * 
  */
 require $GLOBALS['path']['autoload'];
+require $GLOBALS['path']['routes'];;
 
 $api = new Router();

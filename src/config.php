@@ -8,8 +8,8 @@
 $GLOBALS['path'] = [
     'src'       => 'src/',
     'api'       => 'api/',
-    'autoload'  => 'src/autoload.php',
-    'provider'  => 'src/providers/api.provider.php'
+    'autoload'  => 'src/classes/autoload.php',
+    'routes'  => 'routes/api.php'
 ];
 
 /**
