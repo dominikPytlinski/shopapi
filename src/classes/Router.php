@@ -74,16 +74,16 @@ class Router {
      * @return  $uri    string
      * 
      */
-    private function setUri()
-    {
-        $params = '';
+    // private function setUri()
+    // {
+    //     $params = '';
 
-        for($i = 1; $i < sizeof($this->url) - 1; $i++) {
-            $params .= '{'.reset($this->url).'}/';
-        }
+    //     for($i = 1; $i < sizeof($this->url) - 1; $i++) {
+    //         $params .= '{'.reset($this->url).'}/';
+    //     }
 
-        return $uri = reset($this->url).'/'.$params.end($this->url);
-    }
+    //     return $uri = reset($this->url).'/'.$params.end($this->url);
+    // }
 
     /**
      * 
@@ -114,26 +114,14 @@ class Router {
      * 
      */
     private function loadAction($action, $params)
-    {
-        //extract($params);
-        $this->test($this->url, function () {
-            print_r($this->url);
-        });
-        exit();
+    {        
         $methodParams = [];
 
         for ($i = 1; $i <= count($this->url) - 2; $i++) {
             array_push($methodParams, $this->url[$i]);
         }
 
-        if(count($methodParams) == $params) {
-            $this->controller->$action((object) $methodParams);
-        }
-    }
-
-    private function test($url, $callback)
-    {
-        return $callback;
+        $this->controller->$action(...array_values($methodParams));
     }
 
     /**
@@ -146,7 +134,8 @@ class Router {
     private function route($data)
     {
         if($data === null) {
-            $this->error(404);
+            echo 'pusty url';
+            // $this->error(404);
         } else {
             (!$this->loadController($data->controller)) ? $this->error(401) : $this->loadAction($data->action, $data->params);
         }

@@ -14,9 +14,9 @@ class LoginController extends Controller {
         return (!Auth::token($token)) ? $this->auth = false : $this->auth = true;
     }
 
-    public function index($param)
+    public function index($token)
     {
-        print_r($param);
+        
     }
 
 }

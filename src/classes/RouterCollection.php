@@ -30,8 +30,8 @@ class RouterCollection {
      */
     public static function post($uri, $name)
     {
-        $data = self::prepare($uri, $name, 'POST');
-        self::setRoute($data);
+        self::setParams(self::prepareParams($uri));
+        self::setRoute(self::prepare($uri, $name, 'POST'));
     }
 
     /**
@@ -44,8 +44,8 @@ class RouterCollection {
      */
     public static function put($uri, $name)
     {
-        $data = self::prepare($uri, $name, 'PUT');
-        self::setRoute($data);
+        self::setParams(self::prepareParams($uri));
+        self::setRoute(self::prepare($uri, $name, 'PUT'));
     }
 
     /**
@@ -58,8 +58,8 @@ class RouterCollection {
      */
     public static function delete($uri, $name)
     {
-        $data = self::prepare($uri, $name, 'DELETE');
-        self::setRoute($data);
+        self::setParams(self::prepareParams($uri));
+        self::setRoute(self::prepare($uri, $name, 'DELETE'));
     }
 
     private static function prepareParams($uri)
@@ -72,6 +72,11 @@ class RouterCollection {
 
     private static function setParams($params)
     {
+        $countParams = array_count_values($params);
+        if(count($params) > count($countParams)) {
+            echo 'Nie mogą wystąpić dwa parametry o tej samej nazwie';
+            exit();
+        }
         self::$params = $params;
     }
 
