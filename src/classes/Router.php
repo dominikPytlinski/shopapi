@@ -7,6 +7,7 @@ use api\controllers;
 class Router {
 
     private $url;
+    private $parameters = [];
     private $data = [];
     private $controller;
 
@@ -69,24 +70,6 @@ class Router {
 
     /**
      * 
-     * set uri using $this->url
-     * 
-     * @return  $uri    string
-     * 
-     */
-    // private function setUri()
-    // {
-    //     $params = '';
-
-    //     for($i = 1; $i < sizeof($this->url) - 1; $i++) {
-    //         $params .= '{'.reset($this->url).'}/';
-    //     }
-
-    //     return $uri = reset($this->url).'/'.$params.end($this->url);
-    // }
-
-    /**
-     * 
      * Create new instace of controller class
      * 
      * @param   $controller         string
@@ -114,14 +97,12 @@ class Router {
      * 
      */
     private function loadAction($action, $params)
-    {        
-        $methodParams = [];
-
+    {       
         for ($i = 1; $i <= count($this->url) - 2; $i++) {
-            array_push($methodParams, $this->url[$i]);
+            array_push($this->parameters, $this->url[$i]);
         }
 
-        $this->controller->$action(...array_values($methodParams));
+        $this->controller->$action((object) $_REQUEST, ...array_values($this->parameters));
     }
 
     /**
