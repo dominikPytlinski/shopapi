@@ -62,6 +62,15 @@ class RouterCollection {
         self::setRoute(self::prepare($uri, $name, 'DELETE'));
     }
 
+    /**
+     * 
+     * Set parameters names in matches array
+     * 
+     * @param   $uri        string
+     * 
+     * @return  $matches    array   parameters names
+     * 
+     */
     private static function prepareParams($uri)
     {
         preg_match_all('/\{(.*?)\}/', $uri, $matches);
@@ -70,6 +79,16 @@ class RouterCollection {
         }, $matches[1]);
     }
 
+    /**
+     * 
+     * Check if there are double names in the $params array,
+     * asign $params to self::$params
+     * 
+     * @param   $params         array
+     * 
+     * @return  self::$params   array Array of parameters
+     * 
+     */
     private static function setParams($params)
     {
         $countParams = array_count_values($params);
