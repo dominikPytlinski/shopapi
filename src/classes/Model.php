@@ -6,8 +6,7 @@ use src\classes\Database as DB;
 
 class Model {
 
-    private $values = [];
-    private $conditions = [];
+    private $conditionsAndValues = [];
     private $whereString = '';
     private $queryType = '';
 
@@ -23,8 +22,7 @@ class Model {
     public static function where($conditions)
     {
         $whereString = '';
-        $values = [];
-        $whereConditions = [];
+        $conditionAndValues = [];
 
         if(is_array($conditions[0])) {
             foreach($conditions as $cond) {
@@ -33,11 +31,11 @@ class Model {
                 $value = filter_var($cond[2], FILTER_SANITIZE_STRING);
 
                 $whereString .= $condition.' '.$operator. ' :'.$condition.' AND ';
-                array_push($values, $value);
-                array_push($whereConditions, ':'.$condition);
+                $cav = [':'.$condition, $value];
+                array_push($conditionAndValues, $cav);
             }
             $model = new Model();
-            $model->prepareForQuery($values, rtrim($whereString, ' AND '), $whereConditions, 'where');
+            $model->prepareForQuery($conditionAndValues, rtrim($whereString, ' AND '), 'where');
             return $model;
         }
     }
@@ -58,17 +56,17 @@ class Model {
         }
     }
 
-    private function prepareForQuery($values, $whereString, $whereConditions, $type)
+    private function prepareForQuery($conditionAndValues, $whereString, $type)
     {
-        $this->values = $values;
         $this->whereString = $whereString;
         $this->type = $type;
-        $this->conditions = $whereConditions;
+        $this->conditionsAndValues = $conditionAndValues;
     }
 
     private function query($sql)
     {
         $sth = DB::connect()->prepare($sql);
+        print_r($this->conditionsAndValues);
     }
 
     public function get($table)
