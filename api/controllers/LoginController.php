@@ -5,7 +5,7 @@ namespace api\controllers;
 use src\classes\Controller;
 use src\classes\Auth;
 use src\classes\Hash;
-use api\models\Login;
+use api\models\User;
 
 class LoginController extends Controller {
 
@@ -15,12 +15,12 @@ class LoginController extends Controller {
         return (!Auth::token($token)) ? $this->auth = false : $this->auth = true;
     }
 
-    public function index(Object $request, $token)
+    public function index($token)
     {
-        Login::where('users', [
-            ['login', '=', $request->login],
-            ['password', '=', Hash::create($request->password)]
-        ]);
+        User::where([
+            ['login', '=', 'admin'],
+            ['paswword', '=', 'admin']
+        ])->get('users');
     }
 
 }

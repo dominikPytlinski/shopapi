@@ -4,7 +4,7 @@ namespace api\models;
 
 use src\classes\Model;
 
-class Login extends Model {
+class User extends Model {
 
     function __construct()
     {
