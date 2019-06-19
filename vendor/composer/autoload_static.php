@@ -15,6 +15,10 @@ class ComposerStaticInite7f23a8ffcf0e1eb1e61f044c73ba385
         array (
             'Symfony\\Polyfill\\Ctype\\' => 23,
         ),
+        'F' => 
+        array (
+            'Firebase\\JWT\\' => 13,
+        ),
         'D' => 
         array (
             'Dotenv\\' => 7,
@@ -25,6 +29,10 @@ class ComposerStaticInite7f23a8ffcf0e1eb1e61f044c73ba385
         'Symfony\\Polyfill\\Ctype\\' => 
         array (
             0 => __DIR__ . '/..' . '/symfony/polyfill-ctype',
+        ),
+        'Firebase\\JWT\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/firebase/php-jwt/src',
         ),
         'Dotenv\\' => 
         array (
