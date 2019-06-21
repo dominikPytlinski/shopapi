@@ -15,7 +15,7 @@ class Router {
     {
         $this->getUrl();
         $data = ($this->url != null) ? $this->prepareRoute() : null;
-        (isset($data->code)) ? $this->error($data->code) : $this->route($data);
+        (isset($data->code)) ? $this->error($data) : $this->route($data);
     }
 
     /**
@@ -58,10 +58,10 @@ class Router {
         }
 
         if(!isset($data['uri']) || !isset($data['controller']) || !isset($data['action']) || !isset($data['params'])) {
-            return (object) ['code' => 400];
+            return (object) ['code' => 400, 'message' => 'Bad request'];
         }
         if(!isset($data['method'])) {
-            return (object) ['code' => 405];
+            return (object) ['code' => 405, 'message' => 'Method not allowed'];
         }
 
         return (object) $data;
@@ -114,10 +114,9 @@ class Router {
     private function route($data)
     {
         if($data === null) {
-            echo 'pusty url';
-            // $this->error(404);
+            $this->error((object) ['code' => 404, 'message' => 'Endpoint not found']);
         } else {
-            (!$this->loadController($data->controller)) ? $this->error(401) : $this->loadAction($data->action, $data->params);
+            (!$this->loadController($data->controller)) ? $this->error((object) ['code' => 401, 'message' => 'Unauthorize']) : $this->loadAction($data->action, $data->params);
         }
     }
 
@@ -128,9 +127,10 @@ class Router {
      * @param   $code   int
      * 
      */
-    private function error($code)
+    private function error($data)
     {
-        http_response_code($code);
+        http_response_code($data->code);
+        echo json_encode($data->message);
         exit();
     }
 

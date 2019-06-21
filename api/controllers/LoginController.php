@@ -6,7 +6,6 @@ use src\classes\Controller;
 use src\classes\Auth;
 use src\classes\Hash;
 use api\models\User;
-use Firebase\JWT\JWT;
 
 class LoginController extends Controller {
 
@@ -16,24 +15,14 @@ class LoginController extends Controller {
         return $this->auth = true;
     }
 
-    public function index()
+    public function index($request)
     {
-        // User::where([
-        //     ['login', '=', 'admin'],
-        //     ['paswword', '=', 'admin']
-        // ])->get('users');
-        // $key = "example_key";
-        // $token = array(
-        //     "iss" => "http://example.org",
-        //     "aud" => "http://example.com",
-        //     "iat" => 1356999524,
-        //     "nbf" => 1357000000
-        // );
-
-        // $jwt = JWT::encode($token, $key);
-        // $decoded = JWT::decode($jwt, $key, array('HS256'));
+        $user = User::where([
+            ['login', '=', $request->login],
+            ['password', '=', Hash::create($request->password)]
+        ])->get('users'); 
         
-        
+        echo ($user) ? json_encode(['jwt' => Auth::createToken($user), 'message' => 'Log in successfully']) : json_encode(['message' => 'Incorrect login or password']);
     }
 
 }

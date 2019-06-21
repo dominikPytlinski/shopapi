@@ -66,7 +66,18 @@ class Model {
     private function query($sql)
     {
         $sth = DB::connect()->prepare($sql);
-        print_r($this->conditionsAndValues);
+        foreach($this->conditionsAndValues as $cav) {
+            $sth->bindValue($cav[0], $cav[1], \PDO::PARAM_STR);
+        }
+        $sth->execute();
+        $e = $sth->errorInfo();
+        if(empty(end($e))) {
+            $row = $sth->rowCount();
+            return ($row > 0) ? $sth->fetch(\PDO::FETCH_OBJ) : false;
+        } else {
+            echo end($e);
+            exit();
+        }
     }
 
     public function get($table)
@@ -74,7 +85,7 @@ class Model {
         switch ($this->type) {
             case 'where':
             $sql = "SELECT * FROM $table WHERE $this->whereString";
-            $this->query($sql);
+            return $this->query($sql);
                 break;
             
             default:

@@ -3,6 +3,7 @@
 namespace api\models;
 
 use src\classes\Model;
+use api\models\Role;
 
 class User extends Model {
 
@@ -10,5 +11,4 @@ class User extends Model {
     {
         parent::__construct();
     }
-
 }
