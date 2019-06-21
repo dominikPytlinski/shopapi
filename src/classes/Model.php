@@ -10,6 +10,11 @@ class Model {
     private $whereString = '';
     private $queryType = '';
 
+    function __construct()
+    {
+
+    }
+
     public static function all($table)
     {
         $sql = "SELECT * FROM $table";

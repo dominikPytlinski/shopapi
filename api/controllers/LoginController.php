@@ -22,6 +22,7 @@ class LoginController extends Controller {
             ['password', '=', Hash::create($request->password)]
         ])->get('users'); 
         
+        
         echo ($user) ? json_encode(['jwt' => Auth::createToken($user), 'message' => 'Log in successfully']) : json_encode(['message' => 'Incorrect login or password']);
     }
 

@@ -2,12 +2,11 @@
 
 namespace api\models;
 
-use src\classes\Model;
-
-class User extends Model {
+class Role extends Model {
 
     function __construct()
     {
         parent::__construct();
     }
+
 }

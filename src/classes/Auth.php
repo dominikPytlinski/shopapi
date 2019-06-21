@@ -36,7 +36,7 @@ class Auth {
             "nbf"  => 1357000000,
             "id"   => $data->id,
             "name" => $data->name,
-            "role" => $data->role
+            "role" => $data->role_id
         );
 
         return $jwt = JWT::encode($token, $key);
