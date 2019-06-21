@@ -10,4 +10,10 @@ class User extends Model {
     {
         parent::__construct();
     }
+
+    public function test()
+    {
+        $model = new Model;
+        $model->hasOne('role');
+    }
 }

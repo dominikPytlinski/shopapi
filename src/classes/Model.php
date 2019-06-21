@@ -7,7 +7,7 @@ use src\classes\Database as DB;
 class Model {
 
     private $conditionsAndValues = [];
-    private $whereString = '';
+    private $whereString = 'WHERE ';
     private $queryType = '';
 
     function __construct()
@@ -97,6 +97,11 @@ class Model {
                 # code...
                 break;
         }
+    }
+
+    public function hasOne($class)
+    {
+        echo $class;
     }
 
 }
