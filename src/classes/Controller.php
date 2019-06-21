@@ -11,15 +11,9 @@ class Controller {
      * @param   $class  string  class name
      * 
      */
-    function __construct($class)
+    function __construct()
     {
-        require_once('Auth.php');
         
-        $classes = explode('\\', $class);
-        $model = substr(end($classes), 0, -10);
-        if(file_exists('api/models/'.$model.'.php')) {
-            require 'api/models/'.$model.'.php';
-        }
     }
 
 

@@ -11,7 +11,7 @@ class LoginController extends Controller {
 
     function __construct($token)
     {
-        parent::__construct(__CLASS__);
+        parent::__construct();
         return $this->auth = true;
     }
 
