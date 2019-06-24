@@ -21,13 +21,14 @@ class UserController extends Controller {
             ['login', '=', $request->login],
             ['password', '=', Hash::create($request->password)]
         ])->role(); 
-        var_dump($user);
-        // echo ($user) ? json_encode(['jwt' => Auth::createToken($user), 'message' => 'Logged in successfully']) : json_encode(['message' => 'Incorrect login or password']);
+        
+        echo ($user) ? json_encode(['jwt' => Auth::createToken($user), 'message' => 'Logged in successfully']) : json_encode(['message' => 'Incorrect login or password']);
     }
 
     public function index($request)
     {
-        var_dump(User::orderBy('id', 'ASC')->get());
+        $user = User::all();
+        var_dump($user);
     }
 
 }

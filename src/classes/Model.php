@@ -46,13 +46,15 @@ class Model {
      * 
      * Select all records 
      * 
+     * @return  array   Result from database
+     * 
      */
     public function all()
     {
         $class = get_called_class();
         $model = new $class();
         $model->setTable();
-        $model->get();
+        return $model->get();
     }
 
     /**
@@ -83,6 +85,19 @@ class Model {
             $model->setTable();
             $model->prepareWhereQuery($conditionAndValues, rtrim($whereString, ' AND '));
             return $model;
+        } else {
+            $condition = filter_var($conditions[0], FILTER_SANITIZE_STRING);
+            $operator = filter_var($conditions[1], FILTER_SANITIZE_STRING);
+            $value = filter_var($conditions[2], FILTER_SANITIZE_STRING);
+
+            $whereString = $condition.' '.$operator.' :'.$condition;
+            $cav = [':'.$condition, $value];
+            array_push($conditionAndValues, $cav);
+            $class = get_called_class();
+            $model = new $class();
+            $model->setTable();
+            $model->prepareWhereQuery($conditionAndValues, $whereString);
+            return $model;
         }
     }
 
@@ -108,7 +123,7 @@ class Model {
      * 
      * Select from database
      * 
-     * @return  object  $sth    PDO object
+     * @return  array  $sth    Array with object
      * 
      */
     public function get()
