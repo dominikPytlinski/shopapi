@@ -34,9 +34,9 @@ class Auth {
             "iat"  => time(),
             "exp"  => time() + 1200,
             "nbf"  => 1357000000,
-            "id"   => $data->id,
-            "name" => $data->name,
-            "role" => $data->role_id
+            "id"   => $data[0]->id,
+            "name" => $data[0]->name,
+            "role" => $data[0]->role
         );
 
         return $jwt = JWT::encode($token, $key);

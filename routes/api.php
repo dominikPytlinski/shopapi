@@ -2,4 +2,4 @@
 
 use src\classes\RouterCollection as Router;
 
-Router::post('login/index', 'LoginController@index');
+Router::post('user/login', 'UserController@login');

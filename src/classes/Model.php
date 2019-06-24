@@ -3,16 +3,22 @@
 namespace src\classes;
 
 use src\classes\Database as DB;
+use src\helpers\ModelHelper;
 
 class Model {
 
+    private static $model;
+    private $table;
     private $conditionsAndValues = [];
-    private $whereString = 'WHERE ';
+    private $whereString;
     private $queryType = '';
 
-    function __construct()
+    function __construct($class)
     {
+        self::$model = $class;
 
+        $class = explode('\\', $class);
+        $this->table = lcfirst(end($class)).'s';
     }
 
     public static function all($table)
@@ -39,8 +45,8 @@ class Model {
                 $cav = [':'.$condition, $value];
                 array_push($conditionAndValues, $cav);
             }
-            $model = new Model();
-            $model->prepareForQuery($conditionAndValues, rtrim($whereString, ' AND '), 'where');
+            $model = new self::$model;
+            $model->prepareWhereQuery($conditionAndValues, rtrim($whereString, ' AND '));
             return $model;
         }
     }
@@ -61,18 +67,24 @@ class Model {
         }
     }
 
-    private function prepareForQuery($conditionAndValues, $whereString, $type)
+    private function prepareWhereQuery($conditionAndValues, $whereString)
     {
-        $this->whereString = $whereString;
-        $this->type = $type;
+        $this->whereString = 'WHERE '.$whereString;
         $this->conditionsAndValues = $conditionAndValues;
     }
 
-    public function get($table)
+    public function get()
     {
-        switch ($this->type) {
-            case 'where':
-            $sql = "SELECT * FROM $table WHERE $this->whereString";
+        
+    }
+
+    public function belongsTo($class)
+    {
+        $table = $class.'s';
+        $foreignKey = $class.'_id';
+
+        if(isset($this->whereString)) {
+            $sql = "SELECT $this->table.*, $table.$class FROM $this->table LEFT JOIN $table ON $this->table.$foreignKey = $table.id $this->whereString";
             $sth = DB::connect()->prepare($sql);
             foreach($this->conditionsAndValues as $cav) {
                 $sth->bindValue($cav[0], $cav[1], \PDO::PARAM_STR);
@@ -80,23 +92,11 @@ class Model {
             $sth->execute();
             $e = $sth->errorInfo();
             if(empty(end($e))) {
-                $row = $sth->rowCount();
-                return ($row > 0) ? $sth->fetch(\PDO::FETCH_OBJ) : false;
+                return $sth->fetchAll(\PDO::FETCH_OBJ);
             } else {
-                echo end($e);
-                exit();
+                return end($e);
             }
-                break;
-            
-            default:
-                # code...
-                break;
         }
-    }
-
-    public function hasOne($class)
-    {
-        echo $class;
     }
 
 }

@@ -8,12 +8,11 @@ class User extends Model {
 
     function __construct()
     {
-        parent::__construct();
+        parent::__construct(__CLASS__);
     }
 
-    public function test()
+    public function role()
     {
-        $model = new Model;
-        $model->hasOne('role');
+        return $this->belongsTo('role');
     }
 }
