@@ -51,6 +51,7 @@ class Model {
     {
         $class = get_called_class();
         $model = new $class();
+        $model->setTable();
         $model->get();
     }
 
