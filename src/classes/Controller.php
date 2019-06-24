@@ -15,10 +15,10 @@ class Controller {
      */
     function __construct($controller)
     {
-        $model = substr($controller, 0, -10);
-        require_once 'api/models/'.$model.'.php';
-        $class = 'api\models\\'.$model;
-        return $this->model = new $class();
+        // $model = substr($controller, 0, -10);
+        // require_once 'api/models/'.$model.'.php';
+        // $class = 'api\models\\'.$model;
+        // return $this->model = new $class();
     }
 
 }

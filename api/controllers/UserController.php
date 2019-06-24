@@ -25,4 +25,9 @@ class UserController extends Controller {
         echo ($user) ? json_encode(['jwt' => Auth::createToken($user), 'message' => 'Logged in successfully']) : json_encode(['message' => 'Incorrect login or password']);
     }
 
+    public function index($request)
+    {
+        var_dump(User::orderBy('id', 'ASC')->get());
+    }
+
 }

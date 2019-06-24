@@ -11,7 +11,8 @@ class Model {
     private $table;
     private $conditionsAndValues = [];
     private $whereString;
-    private $queryType = '';
+    private $queryType;
+    private $orderBy;
 
     function __construct($class)
     {
@@ -21,16 +22,16 @@ class Model {
         $this->table = lcfirst(end($class)).'s';
     }
 
-    public static function all($table)
+    public function all()
     {
-        $sql = "SELECT * FROM $table";
+        $sql = "SELECT * FROM $this->table";
         $sth = DB::connect()->prepare($sql);
         $sth->execute();
 
         return $sth->fetchAll(\PDO::FETCH_OBJ);
     }
 
-    public static function where($conditions)
+    public function where($conditions)
     {
         $whereString = '';
         $conditionAndValues = [];
@@ -45,37 +46,48 @@ class Model {
                 $cav = [':'.$condition, $value];
                 array_push($conditionAndValues, $cav);
             }
-            $model = new self::$model;
+            $class = get_called_class();
+            $model = new $class();
             $model->prepareWhereQuery($conditionAndValues, rtrim($whereString, ' AND '));
             return $model;
         }
     }
 
-    public static function token($token)
+    public function orderBy($order, $direction)
     {
-        $sql = 'SELECT * FROM tokens WHERE token = :token';
-        $sth = DB::connect()->prepare($sql);
-        $sth->bindValue(':token', $token, \PDO::PARAM_STR);
-        $sth->execute();
-        $e = $sth->errorInfo();
-        if(empty(end($e))) {
-            $row = $sth->rowCount();
-            return ($row > 0) ? true : false;
-        } else {
-            echo end($e);
-            exit();
-        }
+        $class = get_called_class();
+        $model = new $class();
+        $model->prepareOrderByQuery($order, $direction);
+        return $model;
     }
 
-    private function prepareWhereQuery($conditionAndValues, $whereString)
+    protected function prepareWhereQuery($conditionAndValues, $whereString)
     {
         $this->whereString = 'WHERE '.$whereString;
         $this->conditionsAndValues = $conditionAndValues;
     }
 
+    protected function prepareOrderByQuery($order, $direction)
+    {
+        $this->orderBy = "ORDER BY $order $direction";
+    }
+
     public function get()
     {
-        
+        $sql = "SELECT $this->table.* FROM $this->table $this->whereString $this->orderBy";
+        $sth = DB::connect()->prepare($sql);
+        if(!empty($this->conditionsAndValues)) {
+            foreach($this->conditionsAndValues as $cav) {
+                $sth->bindValue($cav[0], $cav[1], \PDO::PARAM_STR);
+            }
+        }
+        $sth->execute();
+        $e = $sth->errorInfo();
+        if(empty(end($e))) {
+            return $sth->fetchAll(\PDO::FETCH_OBJ);
+        } else {
+            return end($e);
+        }
     }
 
     public function belongsTo($class)
@@ -83,19 +95,17 @@ class Model {
         $table = $class.'s';
         $foreignKey = $class.'_id';
 
-        if(isset($this->whereString)) {
-            $sql = "SELECT $this->table.*, $table.$class FROM $this->table LEFT JOIN $table ON $this->table.$foreignKey = $table.id $this->whereString";
-            $sth = DB::connect()->prepare($sql);
-            foreach($this->conditionsAndValues as $cav) {
-                $sth->bindValue($cav[0], $cav[1], \PDO::PARAM_STR);
-            }
-            $sth->execute();
-            $e = $sth->errorInfo();
-            if(empty(end($e))) {
-                return $sth->fetchAll(\PDO::FETCH_OBJ);
-            } else {
-                return end($e);
-            }
+        $sql = "SELECT $this->table.*, $table.$class FROM $this->table LEFT JOIN $table ON $this->table.$foreignKey = $table.id $this->whereString";
+        $sth = DB::connect()->prepare($sql);
+        foreach($this->conditionsAndValues as $cav) {
+            $sth->bindValue($cav[0], $cav[1], \PDO::PARAM_STR);
+        }
+        $sth->execute();
+        $e = $sth->errorInfo();
+        if(empty(end($e))) {
+            return $sth->fetchAll(\PDO::FETCH_OBJ);
+        } else {
+            return end($e);
         }
     }
 
