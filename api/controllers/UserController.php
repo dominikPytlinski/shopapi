@@ -21,8 +21,8 @@ class UserController extends Controller {
             ['login', '=', $request->login],
             ['password', '=', Hash::create($request->password)]
         ])->role(); 
-        
-        echo ($user) ? json_encode(['jwt' => Auth::createToken($user), 'message' => 'Logged in successfully']) : json_encode(['message' => 'Incorrect login or password']);
+        var_dump($user);
+        // echo ($user) ? json_encode(['jwt' => Auth::createToken($user), 'message' => 'Logged in successfully']) : json_encode(['message' => 'Incorrect login or password']);
     }
 
     public function index($request)

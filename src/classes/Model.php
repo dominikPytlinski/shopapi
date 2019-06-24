@@ -142,7 +142,7 @@ class Model {
         $table = $class.'s';
         $foreignKey = $class.'_id';
 
-        $sql = "SELECT $this->table.*, $table.$class FROM $this->table LEFT JOIN $table ON $this->table.$foreignKey = $table.id $this->whereString";
+        $sql = "SELECT $table.*, $this->table.* FROM $this->table LEFT JOIN $table ON $this->table.$foreignKey = $table.id $this->whereString";
         $sth = DB::connect()->prepare($sql);
         foreach($this->conditionsAndValues as $cav) {
             $sth->bindValue($cav[0], $cav[1], \PDO::PARAM_STR);
