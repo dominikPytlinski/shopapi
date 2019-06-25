@@ -12,6 +12,7 @@ class UserController extends Controller {
     function __construct($controller)
     {
         parent::__construct($controller);
+        header("Access-Control-Allow-Origin: *");
         return $this->auth = true;
     }
 

@@ -31,7 +31,7 @@ class Model {
      * @var string
      * 
      */
-    private $whereString;
+    private $where;
 
     /**
      * 
@@ -67,7 +67,7 @@ class Model {
      */
     public function where($conditions)
     {
-        $whereString = '';
+        $where = '';
         $conditionAndValues = [];
 
         if(is_array($conditions[0])) {
@@ -76,27 +76,27 @@ class Model {
                 $operator = filter_var($cond[1], FILTER_SANITIZE_STRING);
                 $value = filter_var($cond[2], FILTER_SANITIZE_STRING);
 
-                $whereString .= $condition.' '.$operator. ' :'.$condition.' AND ';
+                $where .= $condition.' '.$operator. ' :'.$condition.' AND ';
                 $cav = [':'.$condition, $value];
                 array_push($conditionAndValues, $cav);
             }
             $class = get_called_class();
             $model = new $class();
             $model->setTable();
-            $model->prepareWhereQuery($conditionAndValues, rtrim($whereString, ' AND '));
+            $model->prepareWhereQuery($conditionAndValues, rtrim($where, ' AND '));
             return $model;
         } else {
             $condition = filter_var($conditions[0], FILTER_SANITIZE_STRING);
             $operator = filter_var($conditions[1], FILTER_SANITIZE_STRING);
             $value = filter_var($conditions[2], FILTER_SANITIZE_STRING);
 
-            $whereString = $condition.' '.$operator.' :'.$condition;
+            $where = $condition.' '.$operator.' :'.$condition;
             $cav = [':'.$condition, $value];
             array_push($conditionAndValues, $cav);
             $class = get_called_class();
             $model = new $class();
             $model->setTable();
-            $model->prepareWhereQuery($conditionAndValues, $whereString);
+            $model->prepareWhereQuery($conditionAndValues, $where);
             return $model;
         }
     }
@@ -128,7 +128,7 @@ class Model {
      */
     public function get()
     {
-        $sql = "SELECT $this->table.* FROM $this->table $this->whereString $this->orderBy";
+        $sql = "SELECT $this->table.* FROM $this->table $this->where $this->orderBy";
         $sth = DB::connect()->prepare($sql);
         if(!empty($this->conditionsAndValues)) {
             foreach($this->conditionsAndValues as $cav) {
@@ -157,7 +157,7 @@ class Model {
         $table = $class.'s';
         $foreignKey = $class.'_id';
 
-        $sql = "SELECT $table.*, $this->table.* FROM $this->table LEFT JOIN $table ON $this->table.$foreignKey = $table.id $this->whereString";
+        $sql = "SELECT $table.*, $this->table.* FROM $this->table LEFT JOIN $table ON $this->table.$foreignKey = $table.id $this->where";
         $sth = DB::connect()->prepare($sql);
         foreach($this->conditionsAndValues as $cav) {
             $sth->bindValue($cav[0], $cav[1], \PDO::PARAM_STR);
@@ -173,15 +173,15 @@ class Model {
 
     /**
      * 
-     * Asign where string to $this->whereString and conditions and values to $this->conditionsAndValues
+     * Asign where string to $this->where and conditions and values to $this->conditionsAndValues
      * 
      * @param   array   $conditionsAndValues    Conditions and values
-     * @param   string  $whereString            Where string
+     * @param   string  $where            Where string
      * 
      */
-    protected function prepareWhereQuery($conditionAndValues, $whereString)
+    protected function prepareWhereQuery($conditionAndValues, $where)
     {
-        $this->whereString = 'WHERE '.$whereString;
+        $this->where = 'WHERE '.$where;
         $this->conditionsAndValues = $conditionAndValues;
     }
 
